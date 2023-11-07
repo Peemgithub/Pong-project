@@ -35,12 +35,12 @@ module graphic(
 //    // LEFT wall boundaries
 //    parameter L_WALL_L = 32;    
 //    parameter L_WALL_R = 39;    // 8 pixels wide
-//    // TOP wall boundaries
-//    parameter T_WALL_T = 64;    
-//    parameter T_WALL_B = 71;    // 8 pixels wide
-//    // BOTTOM wall boundaries
-//    parameter B_WALL_T = 472;    
-//    parameter B_WALL_B = 479;    // 8 pixels wide
+    // TOP wall boundaries
+    parameter T_bg_T = 64;    
+    parameter T_bg_B = 71;    // 8 pixels wide
+    // BOTTOM wall boundaries
+    parameter B_bg_T = 472;    
+    parameter B_bg_B = 479;    // 8 pixels wide
     
     
     
@@ -60,20 +60,8 @@ module graphic(
     //Add by myself
     // PADDLE
     // paddle horizontal boundaries
-    parameter X_PADl_L = 600;
-    parameter X_PADl_R = 603;    // 4 pixels wide
-    // paddle vertical boundary signals
-    wire [9:0] y_padl_t, y_padl_b;
-    parameter PADl_HEIGHT = 72;  // 72 pixels high
-    // register to track top boundary and buffer
-    reg [9:0] y_padl_reg = 204;      // Paddle starting position
-    reg [9:0] y_padl_next;
-    // paddle moving velocity when a button is pressed
-    parameter PADl_VELOCITY = 3;     // change to speed up or slow down paddle 
-    
-    // paddle horizontal boundaries
-    parameter X_PADr_L = 36;
-    parameter X_PADr_R = 39;    // 4 pixels wide
+    parameter X_PADr_L = 600;
+    parameter X_PADr_R = 603;    // 4 pixels wide
     // paddle vertical boundary signals
     wire [9:0] y_padr_t, y_padr_b;
     parameter PADr_HEIGHT = 72;  // 72 pixels high
@@ -81,7 +69,19 @@ module graphic(
     reg [9:0] y_padr_reg = 204;      // Paddle starting position
     reg [9:0] y_padr_next;
     // paddle moving velocity when a button is pressed
-    parameter PADr_VELOCITY = 3;     // change to speed up or slow down paddle movement
+    parameter PADr_VELOCITY = 3;     // change to speed up or slow down paddle 
+    
+    // paddle horizontal boundaries
+    parameter X_PADl_L = 36;
+    parameter X_PADl_R = 39;    // 4 pixels wide
+    // paddle vertical boundary signals
+    wire [9:0] y_padl_t, y_padl_b;
+    parameter PADl_HEIGHT = 72;  // 72 pixels high
+    // register to track top boundary and buffer
+    reg [9:0] y_padl_reg = 204;      // Paddle starting position
+    reg [9:0] y_padl_next;
+    // paddle moving velocity when a button is pressed
+    parameter PADl_VELOCITY = 3;     // change to speed up or slow down paddle movement
     //Add by myself
     
     
@@ -111,16 +111,16 @@ module graphic(
     // Register Control
     always @(posedge clk or posedge reset)
         if(reset) begin
-            y_padl_reg <= 204;
             y_padr_reg <= 204;
+            y_padl_reg <= 204;
             x_ball_reg <= 0;
             y_ball_reg <= 0;
             x_delta_reg <= 10'h002;
             y_delta_reg <= 10'h002;
         end
         else begin
-            y_padl_reg <= y_padl_next;
-            y_padr_reg <= y_padr_next;
+            y_padr_reg <= y_padl_next;
+            y_padl_reg <= y_padr_next;
             x_ball_reg <= x_ball_next;
             y_ball_reg <= y_ball_next;
             x_delta_reg <= x_delta_next;
@@ -143,8 +143,8 @@ module graphic(
     
     
     // OBJECT STATUS SIGNALS
-    wire l_wall_on, t_wall_on, b_wall_on, pad_on, sq_ball_on, ball_on;
-    wire [11:0] wall_rgb, pad_rgb, ball_rgb, bg_rgb;
+    wire padr_on, padl_on, sq_ball_on, ball_on;
+    wire [11:0] padr_rgb, padl_rgb, ball_rgb, bg_rgb;
     
     
 //    // pixel within wall boundaries
@@ -155,8 +155,8 @@ module graphic(
     
     // assign object colors
 //    assign wall_rgb   = 12'h00F;    // blue walls
-    assign padl_rgb   = 12'h00F;    // blue paddle
     assign padr_rgb   = 12'h00F;    // blue paddle
+    assign padl_rgb   = 12'h00F;    // blue paddle
     assign ball_rgb   = 12'hF00;    // red ball
     assign bg_rgb     = 12'h0FF;    // aqua background
     
@@ -175,14 +175,19 @@ module graphic(
        
                     
     // Paddle Control
-    always @* begin
-        y_pad_next = y_pad_reg;     // no move
+    always @* begin //fix push in the same time
+        y_padr_next = y_padr_reg;     // no move
+        y_padl_next = y_padl_reg;     // no move
         
         if(refresh_tick)
-            if(btn[1] & (y_pad_b < (B_WALL_T - 1 - PAD_VELOCITY)))
-                y_pad_next = y_pad_reg + PAD_VELOCITY;  // move down
-            else if(btn[0] & (y_pad_t > (T_WALL_B - 1 - PAD_VELOCITY)))
-                y_pad_next = y_pad_reg - PAD_VELOCITY;  // move up
+            if(btn[1].. & (y_padr_b < (B_bg_T - 1 - PADr_VELOCITY))) //edit btn[1] to push k
+                y_padr_next = y_padr_reg + PADr_VELOCITY;  // move down
+            else if(btn[0].. & (y_padr_t > (T_bg_B - 1 - PADr_VELOCITY))) //edit btn[1] to push i
+                y_padr_next = y_padr_reg - PADr_VELOCITY;  // move up
+            if(btn[1].. & (y_padl_b < (B_bg_T - 1 - PADl_VELOCITY))) //edit btn[1] to push s
+                y_padl_next = y_padl_reg + PADl_VELOCITY;  // move down
+            else if(btn[0].. & (y_padl_t > (T_bg_B - 1 - PADl_VELOCITY))) //edit btn[1] to push w
+                y_padl_next = y_padl_reg - PADl_VELOCITY;  // move up
     end
     
     
