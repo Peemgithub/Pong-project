@@ -11,14 +11,14 @@
 
 module graphic(
     input clk,  
-    input reset,    
-    input [1:0] btn,        // btn[0] = up, btn[1] = down
+    input reset,    //btnC
+    input [3:0] btn,        // btn[0] = left up, btn[1] = left down, btn[2] = right up, btn[3] = right down
     input gra_still,        // still graphics - newgame, game over states
     input video_on,
     input [9:0] x,
     input [9:0] y,
     output graph_on,
-    output reg hit, miss,   // ball hit or miss
+    output reg hit, missl, missr,   // ball hit or miss
     output reg [11:0] graph_rgb
     );
     
@@ -36,11 +36,11 @@ module graphic(
 //    parameter L_WALL_L = 32;    
 //    parameter L_WALL_R = 39;    // 8 pixels wide
     // TOP wall boundaries
-    parameter T_bg_T = 64;    
-    parameter T_bg_B = 71;    // 8 pixels wide
+    parameter T_WALL_T = 64;    
+    parameter T_WALL_B = 71;    // 8 pixels wide
     // BOTTOM wall boundaries
-    parameter B_bg_T = 472;    
-    parameter B_bg_B = 479;    // 8 pixels wide
+    parameter B_WALL_T = 472;    
+    parameter B_WALL_B = 479;    // 8 pixels wide
     
     
     
@@ -60,8 +60,8 @@ module graphic(
     //Add by myself
     // PADDLE
     // paddle horizontal boundaries
-    parameter X_PADr_L = 600;
-    parameter X_PADr_R = 603;    // 4 pixels wide
+    parameter x_padr_l = 600;
+    parameter x_padr_r = 603;    // 4 pixels wide
     // paddle vertical boundary signals
     wire [9:0] y_padr_t, y_padr_b;
     parameter PADr_HEIGHT = 72;  // 72 pixels high
@@ -72,8 +72,8 @@ module graphic(
     parameter PADr_VELOCITY = 3;     // change to speed up or slow down paddle 
     
     // paddle horizontal boundaries
-    parameter X_PADl_L = 36;
-    parameter X_PADl_R = 39;    // 4 pixels wide
+    parameter x_padl_l = 36;
+    parameter x_padl_r = 39;    // 4 pixels wide
     // paddle vertical boundary signals
     wire [9:0] y_padl_t, y_padl_b;
     parameter PADl_HEIGHT = 72;  // 72 pixels high
@@ -143,18 +143,18 @@ module graphic(
     
     
     // OBJECT STATUS SIGNALS
-    wire padr_on, padl_on, sq_ball_on, ball_on;
+    wire t_wall_on, b_wall_on, padr_on, padl_on, sq_ball_on, ball_on;
     wire [11:0] padr_rgb, padl_rgb, ball_rgb, bg_rgb;
     
     
 //    // pixel within wall boundaries
 //    assign l_wall_on = ((L_WALL_L <= x) && (x <= L_WALL_R)) ? 1 : 0;
-//    assign t_wall_on = ((T_WALL_T <= y) && (y <= T_WALL_B)) ? 1 : 0;
-//    assign b_wall_on = ((B_WALL_T <= y) && (y <= B_WALL_B)) ? 1 : 0;
+    assign t_wall_on = ((T_WALL_T <= y) && (y <= T_WALL_B)) ? 1 : 0;
+    assign b_wall_on = ((B_WALL_T <= y) && (y <= B_WALL_B)) ? 1 : 0;
     
     
     // assign object colors
-//    assign wall_rgb   = 12'h00F;    // blue walls
+    assign wall_rgb   = 12'h00F;    // blue walls
     assign padr_rgb   = 12'h00F;    // blue paddle
     assign padl_rgb   = 12'h00F;    // blue paddle
     assign ball_rgb   = 12'hF00;    // red ball
@@ -164,13 +164,13 @@ module graphic(
     // paddle 
     assign y_padl_t = y_padl_reg;                             // paddle top position
     assign y_padl_b = y_padl_t + PADl_HEIGHT - 1;              // paddle bottom position
-    assign padl_on = (X_PADl_L <= x) && (x <= X_PADl_R) &&     // pixel within paddle boundaries
+    assign padl_on = (x_padl_l <= x) && (x <= x_padl_r) &&     // pixel within paddle boundaries
                     (y_padl_t <= y) && (y <= y_padl_b);
                     
     // paddle 
     assign y_padr_t = y_padr_reg;                             // paddle top position
     assign y_padr_b = y_padr_t + PADr_HEIGHT - 1;              // paddle bottom position
-    assign padl_on = (X_PADr_L <= x) && (x <= X_PADr_R) &&     // pixel within paddle boundaries
+    assign padr_on = (x_padr_l <= x) && (x <= x_padr_r) &&     // pixel within paddle boundaries
                     (y_padr_t <= y) && (y <= y_padr_b);
        
                     
@@ -180,13 +180,13 @@ module graphic(
         y_padl_next = y_padl_reg;     // no move
         
         if(refresh_tick)
-            if(btn[1].. & (y_padr_b < (B_bg_T - 1 - PADr_VELOCITY))) //edit btn[1] to push k
+            if(btn[3] & (y_padr_b < (B_WALL_T - 1 - PADr_VELOCITY))) //edit btn[3] to push k
                 y_padr_next = y_padr_reg + PADr_VELOCITY;  // move down
-            else if(btn[0].. & (y_padr_t > (T_bg_B - 1 - PADr_VELOCITY))) //edit btn[1] to push i
+            else if(btn[2] & (y_padr_t > (T_WALL_B - 1 - PADr_VELOCITY))) //edit btn[2] to push i
                 y_padr_next = y_padr_reg - PADr_VELOCITY;  // move up
-            if(btn[1].. & (y_padl_b < (B_bg_T - 1 - PADl_VELOCITY))) //edit btn[1] to push s
+            else if(btn[1] & (y_padl_b < (B_WALL_T - 1 - PADl_VELOCITY))) //edit btn[1] to push s
                 y_padl_next = y_padl_reg + PADl_VELOCITY;  // move down
-            else if(btn[0].. & (y_padl_t > (T_bg_B - 1 - PADl_VELOCITY))) //edit btn[1] to push w
+            else if(btn[0] & (y_padl_t > (T_WALL_B - 1 - PADl_VELOCITY))) //edit btn[0] to push w
                 y_padl_next = y_padl_reg - PADl_VELOCITY;  // move up
     end
     
@@ -216,7 +216,8 @@ module graphic(
     // change ball direction after collision
     always @* begin
         hit = 1'b0;
-        miss = 1'b0;
+        missl = 1'b0;
+        missr = 1'b0;
         x_delta_next = x_delta_reg;
         y_delta_next = y_delta_reg;
         
@@ -231,21 +232,30 @@ module graphic(
         else if(y_ball_b > (B_WALL_T))         // reach bottom wall
             y_delta_next = BALL_VELOCITY_NEG;   // move up
         
-        else if(x_ball_l <= L_WALL_R)           // reach left wall
-            x_delta_next = BALL_VELOCITY_POS;   // move right
+//        else if(x_ball_l <= L_WALL_R)           // reach left wall
+//            x_delta_next = BALL_VELOCITY_POS;   // move right
         
-        else if((X_PAD_L <= x_ball_r) && (x_ball_r <= X_PAD_R) &&
-                (y_pad_t <= y_ball_b) && (y_ball_t <= y_pad_b)) begin
+        else if((x_padr_l <= x_ball_r) && (x_ball_r <= x_padr_r) &&
+                (y_padr_t <= y_ball_b) && (y_ball_t <= y_padr_b)) begin
                     x_delta_next = BALL_VELOCITY_NEG;
-                    hit = 1'b1;         
+                    hit = 1'b1;   //hit right         
         end
         
-        else if(x_ball_r > X_MAX)
-            miss = 1'b1;
+        else if((x_padl_r >= x_ball_l) && (x_ball_l <= x_padl_l) &&
+                (y_padl_t <= y_ball_b) && (y_ball_t <= y_padl_b)) begin
+                    x_delta_next = BALL_VELOCITY_POS;
+                    hit = 1'b1;   //hit left      
+        end
+        
+        else if(x_ball_r > X_MAX) // miss right
+            missr = 1'b1;
+            
+        else if(x_ball_r < 0) //miss left
+            missl = 1'b1;
     end                    
     
     // output status signal for graphics 
-    assign graph_on = l_wall_on | t_wall_on | b_wall_on | pad_on | ball_on;
+    assign graph_on = t_wall_on | b_wall_on | padl_on | padr_on | ball_on;
     
     
     // rgb multiplexing circuit
@@ -253,10 +263,12 @@ module graphic(
         if(~video_on)
             graph_rgb = 12'h000;      // no value, blank
         else
-            if(l_wall_on | t_wall_on | b_wall_on)
+            if(t_wall_on | b_wall_on)
                 graph_rgb = wall_rgb;     // wall color
-            else if(pad_on)
-                graph_rgb = pad_rgb;      // paddle color
+            else if(padr_on)
+                graph_rgb = padr_rgb;      // paddle color
+            else if(padl_on)
+                graph_rgb = padl_rgb;      // paddle color
             else if(ball_on)
                 graph_rgb = ball_rgb;     // ball color
             else

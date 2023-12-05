@@ -1,0 +1,107 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
+| Date         : Tue Dec  5 15:47:11 2023
+| Host         : DESKTOP-KTBA880 running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file top_control_sets_placed.rpt
+| Design       : top
+| Device       : xc7a35t
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Total control sets                                       |    29 |
+|    Minimum number of control sets                        |    29 |
+|    Addition due to synthesis replication                 |     0 |
+|    Addition due to physical synthesis replication        |     0 |
+| Unused register locations in slices containing registers |   176 |
++----------------------------------------------------------+-------+
+* Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
+** Run report_qor_suggestions for automated merging and remapping suggestions
+
+
+2. Histogram
+------------
+
++--------------------+-------+
+|       Fanout       | Count |
++--------------------+-------+
+| Total control sets |    29 |
+| >= 0 to < 4        |    20 |
+| >= 4 to < 6        |     2 |
+| >= 6 to < 8        |     2 |
+| >= 8 to < 10       |     0 |
+| >= 10 to < 12      |     2 |
+| >= 12 to < 14      |     1 |
+| >= 14 to < 16      |     0 |
+| >= 16              |     2 |
++--------------------+-------+
+* Control sets can be remapped at either synth_design or opt_design
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |              28 |           23 |
+| No           | No                    | Yes                    |              59 |           22 |
+| No           | Yes                   | No                     |               0 |            0 |
+| Yes          | No                    | No                     |               0 |            0 |
+| Yes          | No                    | Yes                    |              57 |           21 |
+| Yes          | Yes                   | No                     |               0 |            0 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++-----------------------------------+-----------------------------------------+------------------+------------------+----------------+--------------+
+|            Clock Signal           |              Enable Signal              | Set/Reset Signal | Slice Load Count | Bel Load Count | Bels / Slice |
++-----------------------------------+-----------------------------------------+------------------+------------------+----------------+--------------+
+|  clk_IBUF_BUFG                    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[3].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[2].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[10].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[0].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[8].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[5].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[7].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[6].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[9].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[4].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[14].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[17].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[13].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[15].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[12].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[16].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[11].fDiv/clkDiv_reg_0    |                                         |                  |                1 |              1 |         1.00 |
+|  genblk1[1].fDiv/clkDiv_reg_0     |                                         |                  |                1 |              1 |         1.00 |
+|  fdivTarget/CLK                   |                                         |                  |                1 |              2 |         2.00 |
+|  clk_IBUF_BUFG                    | lcounter_unit/r_digl1[3]_i_1_n_0        | reset_IBUF       |                1 |              4 |         4.00 |
+|  clk_IBUF_BUFG                    | graph_unit/E[0]                         | reset_IBUF       |                1 |              4 |         4.00 |
+|  vga_unit/h_count_reg_reg[6]_0[0] |                                         |                  |                3 |              7 |         2.33 |
+|  clk_IBUF_BUFG                    | vga_unit/E[0]                           | reset_IBUF       |                3 |              7 |         2.33 |
+|  vga_unit/r_25MHz_reg[1]_0[0]     |                                         | reset_IBUF       |                3 |             10 |         3.33 |
+|  vga_unit/r_25MHz_reg[1]_0[0]     | vga_unit/v_count_next_1                 | reset_IBUF       |                6 |             10 |         1.67 |
+|  clk_IBUF_BUFG                    | vga_unit/r_25MHz_reg[1]_0[0]            | reset_IBUF       |                3 |             12 |         4.00 |
+|  clk_IBUF_BUFG                    | vga_unit/FSM_onehot_state_reg_reg[2][0] | reset_IBUF       |                7 |             20 |         2.86 |
+|  clk_IBUF_BUFG                    |                                         | reset_IBUF       |               19 |             49 |         2.58 |
++-----------------------------------+-----------------------------------------+------------------+------------------+----------------+--------------+
+
+
